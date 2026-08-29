@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трекер ЕГЭ — Математика профиль</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f6f3;
+    --bg3: #efede8;
+    --border: rgba(55,53,47,0.15);
+    --border2: rgba(55,53,47,0.3);
+    --text: #1a1a1a;
+    --text2: #6b6b6b;
+    --text3: #999;
+    --purple: #7F77DD;
+    --purple-light: #EEEDFE;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1f1f1f;
+      --bg2: #2a2a2a;
+      --bg3: #333;
+      --border: rgba(255,255,255,0.1);
+      --border2: rgba(255,255,255,0.2);
+      --text: #e8e8e8;
+      --text2: #aaa;
+      --text3: #666;
+      --purple-light: #2e2a5e;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 20px 40px;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 10px;
+  }
+
+  
+
+  
+  
+
+  /* LAYOUT */
+  .layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  /* Термометр */
+  .thermo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .thermo-label { font-size: 11px; color: var(--text3); }
+  .thermo-tube {
+    position: relative;
+    width: 32px;
+    height: 220px;
+    background: var(--bg2);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 0.5px solid var(--border2);
+  }
+  .thermo-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    border-radius: 99px;
+    transition: height 0.4s ease, background 0.4s ease;
+    height: 0%;
+    background: var(--purple);
+  }
+
+  /* Правая часть */
+  .right { flex: 1; min-width: 0; }
+
+  .score-row { margin-bottom: 16px; }
+  .score-big {
+    font-size: 42px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .score-sub { font-size: 15px; color: var(--text2); margin-left: 8px; }
+  .score-detail { font-size: 13px; color: var(--text2); margin-top: 5px; }
+
+  /* Прогресс бар */
+  .prog-wrap { margin-bottom: 18px; }
+  .prog-track {
+    height: 8px;
+    background: var(--bg2);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .prog-bar {
+    height: 100%;
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s ease, background 0.4s ease;
+    background: var(--purple);
+  }
+  .prog-ends {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* Задания часть 1 */
+  .p1-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+
+  .task-btn {
+    border-radius: var(--radius);
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    background: var(--bg2);
+    user-select: none;
+  }
+  .task-btn:hover { opacity: 0.8; }
+  .task-btn .tn { font-size: 12px; font-weight: 500; color: var(--text3); }
+  .task-btn .tm { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* Задания часть 2 */
+  .p2-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .p2-num { font-size: 12px; font-weight: 500; color: var(--text2); width: 36px; flex-shrink: 0; }
+  .p2-topic { font-size: 11px; color: var(--text3); width: 90px; flex-shrink: 0; }
+  .p2-dots { display: flex; gap: 5px; }
+  .dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(127,119,221,0.3);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500;
+    color: rgba(127,119,221,0.5);
+    user-select: none; flex-shrink: 0;
+  }
+  .dot:hover { opacity: 0.75; }
+  .p2-max { font-size: 11px; color: var(--text3); }
+
+  /* Кнопки */
+
+  /* HISTORY */
+  .hist-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  .hist-entry {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .hist-entry:hover { background: var(--bg2); }
+
+  .hist-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hist-date { font-size: 12px; color: var(--text3); }
+  .hist-score { font-size: 22px; font-weight: 500; }
+  .hist-raw { font-size: 12px; color: var(--text2); margin-left: 6px; }
+  .hist-trend { font-size: 12px; font-weight: 500; }
+  .trend-up { color: #0F6E56; }
+  .trend-dn { color: #A32D2D; }
+  .trend-eq { color: var(--text3); }
+
+  .hist-bars {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    gap: 3px;
+    height: 28px;
+    align-items: flex-end;
+  }
+  .hb {
+    border-radius: 2px 2px 0 0;
+    min-height: 3px;
+    transition: height 0.3s;
+  }
+
+  .del-btn {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .del-btn:hover { background: #fff0f0; border-color: #A32D2D; color: #A32D2D; }
+
+  /* DETAIL MODAL */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+  }
+  .modal {
+    background: var(--bg);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    max-width: 500px; width: 100%;
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .modal-close {
+    background: none; border: none;
+    color: var(--text2); font-size: 18px; cursor: pointer;
+  }
+  .modal-tasks {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .mt-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mt-num { font-size: 12px; color: var(--text2); width: 60px; flex-shrink: 0; }
+  .mt-bar-wrap { flex: 1; height: 10px; background: var(--bg2); border-radius: 99px; overflow: hidden; }
+  .mt-bar { height: 100%; border-radius: 99px; transition: width 0.4s; }
+  .mt-score { font-size: 12px; font-weight: 500; width: 40px; text-align: right; flex-shrink: 0; }
+
+  
+
+  @media (max-width: 480px) {
+    .p1-grid { grid-template-columns: repeat(5, 1fr); }
+    .p2-topic { display: none; }
+    .score-big { font-size: 32px; }
+    .hist-bars { grid-template-columns: repeat(10, 1fr); }
+    .hmap-grid { grid-template-columns: repeat(10, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- КАЛЬКУЛЯТОР -->
+  <div>
+    <div class="layout">
+      <div class="thermo-wrap">
+        <span class="thermo-label">100</span>
+        <div class="thermo-tube">
+          <div class="thermo-fill" id="thermo-fill"></div>
+        </div>
+        <span class="thermo-label">0</span>
+      </div>
+
+      <div class="right">
+        <div class="score-row">
+          <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;">
+            <span class="score-big" id="score-big">—</span>
+            <span class="score-sub">тестовый балл</span>
+          </div>
+          <div class="score-detail">
+            Первичных: <strong id="raw-score">0</strong> / 33
+            &nbsp;·&nbsp;
+            Оценка: <strong id="grade-out">—</strong>
+          </div>
+        </div>
+
+        <div class="prog-wrap">
+          <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
+          <div class="prog-ends"><span>0</span><span>100</span></div>
+        </div>
+
+        <div class="section-label">Часть 1 — задания 1–13 (по 1 баллу)</div>
+        <div class="p1-grid" id="tasks-p1"></div>
+
+        <div class="section-label">Часть 2 — задания 14–20</div>
+        <div id="tasks-p2"></div>
+          <button class="save-btn" onclick="saveEntry()">
+            Сохранить
+          </button>
+          <button class="reset-btn" onclick="resetAll()">
+            Сбросить
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+  </div>
+
+</div>
+
+        <div style="font-size:12px;color:var(--text3);margin-top:2px" id="modal-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-tasks" id="modal-tasks"></div>
+    <div id="modal-note-content" style="display:none"><div class="modal-note-label">Заметки</div><div class="modal-note"></div></div>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  {n:1,max:1},{n:2,max:1},{n:3,max:1},{n:4,max:1},{n:5,max:1},{n:6,max:1},
+  {n:7,max:1},{n:8,max:1},{n:9,max:1},{n:10,max:1},{n:11,max:1},{n:12,max:1},{n:13,max:1},
+  {n:14,max:2},{n:15,max:3},{n:16,max:2},{n:17,max:2},{n:18,max:3},{n:19,max:4},{n:20,max:4}
+];
+const TOPICS = {
+  14:'Уравнение',15:'Стереометрия',16:'Неравенство',
+  17:'Моделирование',18:'Планиметрия',19:'Параметр',20:'Олимпиадная'
+};
+const SCALE = {
+  0:0,1:3,2:6,3:11,4:17,5:22,6:27,7:34,8:40,9:46,10:52,11:58,12:64,13:70,
+  14:72,15:74,16:76,17:78,18:80,19:82,20:84,21:86,22:88,23:90,24:92,
+  25:94,26:95,27:96,28:97,29:98,30:99,31:100,32:100,33:100
+};
+const PURPLE = '#7F77DD';
+
+const state = {};
+TASKS.forEach(t => state[t.n] = 0);
+
+function toTest(r) { return SCALE[Math.min(33,Math.max(0,Math.round(r)))] ?? 0; }
+
+function scoreColor(t) {
+  if (t >= 80) return '#0F6E56';
+  if (t >= 60) return '#185FA5';
+  if (t >= 27) return '#854F0B';
+  return '#A32D2D';
+}
+
+function toGrade(t) {
+  if (t >= 72) return '5';
+  if (t >= 50) return '4';
+  if (t >= 27) return '3';
+  return '2';
+}
+
+function barColor(pct) {
+  if (pct >= 85) return '#0F6E56';
+  if (pct >= 60) return '#185FA5';
+  if (pct >= 40) return '#854F0B';
+  return '#A32D2D';
+}
+
+function update() {
+  const raw = TASKS.reduce((s,t) => s + state[t.n], 0);
+  const test = toTest(raw);
+  const col = test > 0 ? scoreColor(test) : PURPLE;
+  document.getElementById('raw-score').textContent = raw;
+  const big = document.getElementById('score-big');
+  big.textContent = test || '—';
+  big.style.color = test > 0 ? col : 'var(--text)';
+  const g = document.getElementById('grade-out');
+  g.textContent = test > 0 ? toGrade(test) : '—';
+  g.style.color = test > 0 ? col : 'var(--text)';
+  document.getElementById('thermo-fill').style.height = test + '%';
+  document.getElementById('thermo-fill').style.background = col;
+  document.getElementById('prog-bar').style.width = test + '%';
+  document.getElementById('prog-bar').style.background = col;
+}
+
+/* Часть 1 */
+const p1 = document.getElementById('tasks-p1');
+TASKS.filter(t => t.n <= 13).forEach(t => {
+  const d = document.createElement('div');
+  d.className = 'task-btn';
+  d.id = 'btn' + t.n;
+  d.innerHTML = `<div class="tn">${t.n}</div><div class="tm">+1</div>`;
+  d.onclick = () => {
+    state[t.n] = state[t.n] ? 0 : 1;
+    d.style.background = state[t.n] ? PURPLE + '22' : 'var(--bg2)';
+    d.style.borderColor = state[t.n] ? PURPLE : 'transparent';
+    d.querySelector('.tn').style.color = state[t.n] ? PURPLE : 'var(--text3)';
+    update();
+  };
+  p1.appendChild(d);
+});
+
+/* Часть 2 */
+const p2 = document.getElementById('tasks-p2');
+TASKS.filter(t => t.n >= 14).forEach(t => {
+  const row = document.createElement('div');
+  row.className = 'p2-row';
+  const num = document.createElement('span');
+  num.className = 'p2-num';
+  num.textContent = '№' + t.n;
+  const topic = document.createElement('span');
+  topic.className = 'p2-topic';
+  topic.textContent = TOPICS[t.n];
+  const dots = document.createElement('div');
+  dots.className = 'p2-dots';
+  for (let i = 1; i <= t.max; i++) {
+    const c = document.createElement('div');
+    c.className = 'dot';
+    c.textContent = i;
+    c.dataset.n = t.n;
+    c.dataset.i = i;
+    c.onclick = () => {
+      state[t.n] = state[t.n] === i ? i - 1 : i;
+      refreshDots(t.n, t.max, dots);
+      update();
+    };
+    dots.appendChild(c);
+  }
+  const maxlbl = document.createElement('span');
+  maxlbl.className = 'p2-max';
+  maxlbl.textContent = 'макс. ' + t.max;
+  row.appendChild(num);
+  row.appendChild(topic);
+  row.appendChild(dots);
+  row.appendChild(maxlbl);
+  p2.appendChild(row);
+});
+
+function refreshDots(n, max, dotsEl) {
+  const v = state[n];
+  for (let j = 1; j <= max; j++) {
+    const sib = dotsEl.querySelector('[data-i="'+j+'"]');
+    sib.style.background = j <= v ? PURPLE : 'transparent';
+    sib.style.color = j <= v ? 'white' : 'rgba(127,119,221,0.5)';
+    sib.style.borderColor = j <= v ? PURPLE : 'rgba(127,119,221,0.3)';
+  }
+}
+
+</script>
+</body>
+</html>
