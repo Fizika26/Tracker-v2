@@ -194,6 +194,19 @@
 
   
 
+  .reset-btn {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 99px;
+    border: 0.5px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.12s;
+  }
+  .reset-btn:hover { background: var(--bg2); }
+
   @media (max-width: 480px) {
     .p1-grid { grid-template-columns: repeat(5, 1fr); }
     .p2-topic { display: none; }
@@ -241,6 +254,7 @@
 
         <div class="section-label">Часть 2 — задания 14–20</div>
         <div id="tasks-p2"></div>
+        <button class="reset-btn" onclick="resetAll()" style="margin-top:14px">Сбросить</button>
         </div>
       </div>
     </div>
@@ -371,6 +385,22 @@ function refreshDots(n, max, dotsEl) {
     sib.style.color = j <= v ? 'white' : 'rgba(127,119,221,0.5)';
     sib.style.borderColor = j <= v ? PURPLE : 'rgba(127,119,221,0.3)';
   }
+}
+
+function resetAll() {
+  TASKS.forEach(t => state[t.n] = 0);
+  TASKS.filter(t => t.n <= 13).forEach(t => {
+    const d = document.getElementById('btn' + t.n);
+    if (!d) return;
+    d.style.background = 'var(--bg2)';
+    d.style.borderColor = 'transparent';
+    d.querySelector('.tn').style.color = 'var(--text3)';
+  });
+  TASKS.filter(t => t.n >= 14).forEach(t => {
+    const anyDot = document.querySelector('[data-n="'+t.n+'"]');
+    if (anyDot) refreshDots(t.n, t.max, anyDot.parentElement);
+  });
+  update();
 }
 
 </script>
