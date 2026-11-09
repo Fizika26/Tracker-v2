@@ -239,8 +239,6 @@
           </div>
           <div class="score-detail">
             Первичных: <strong id="raw-score">0</strong> / 33
-            &nbsp;·&nbsp;
-            Оценка: <strong id="grade-out">—</strong>
           </div>
         </div>
 
@@ -293,13 +291,6 @@ function scoreColor(t) {
   return '#A32D2D';
 }
 
-function toGrade(t) {
-  if (t >= 72) return '5';
-  if (t >= 50) return '4';
-  if (t >= 27) return '3';
-  return '2';
-}
-
 function barColor(pct) {
   if (pct >= 85) return '#0F6E56';
   if (pct >= 60) return '#185FA5';
@@ -315,9 +306,6 @@ function update() {
   const big = document.getElementById('score-big');
   big.textContent = test || '—';
   big.style.color = test > 0 ? col : 'var(--text)';
-  const g = document.getElementById('grade-out');
-  g.textContent = test > 0 ? toGrade(test) : '—';
-  g.style.color = test > 0 ? col : 'var(--text)';
   document.getElementById('thermo-fill').style.height = test + '%';
   document.getElementById('thermo-fill').style.background = col;
   document.getElementById('prog-bar').style.width = test + '%';
